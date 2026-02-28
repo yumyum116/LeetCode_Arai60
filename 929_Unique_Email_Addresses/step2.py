@@ -6,14 +6,14 @@ class Solution:
 		unique_emails = set()
 
 		for email in emails:
-			local, domain = self.split_email(email)
+			local, domain = self.split_email(email)  # 自作関数。タプルをアンパックする
 
-			if self.is_quoted(local):
+			if self.is_quoted(local):		# あるデータや文字列が引用符で囲まれているかをチェックするための bool型プロパティとして使われる命名規則
 				local_content = local[1:-1]
 				normalized_local = local_content
 
 			else:
-				local = local.split('+')[0]
+				local = local.split('+')[0]  # split の戻り値はリストのため、先頭の要素のみを返す
 				normalized_local = local.replace('.','')
 
 			normalized_email = normalized_local + '@' + domain
@@ -22,7 +22,7 @@ class Solution:
 
 		return len(unique_emails)
 
-	def split_email(self, email: str) -> str:
+	def split_email(self, email: str) -> tuple[str, str]:
 		in_quotes = False
 		escape = False
 		for i, char in enumerate(email):
@@ -62,7 +62,7 @@ class Solution:
 		unique_address_set = set()
 		for address in emails:
 			local, domain = address.split('@')
-			plus_ignored_local = re.sub(r'\+.*', '', local)
+			plus_ignored_local = re.sub(r'\+.*', '', local)    # raw 文字列記法を表す 'r'。 'r'を前置した文字列リテラル内では、python 文字列が解釈されない一方で、正規表現の解釈は残るため、'+' を文字として扱うために r'\+' と記述する。
 			dot_removed_local = re.sub(r'\.', '', plus_ignored_local)
 			unique_address_set.add(f"{dot_removed_local}@{domain}")
 
@@ -70,7 +70,7 @@ class Solution:
 
 ##################################
 
-	さらに高速化
+	さらに高速化（文字列操作）
 
 ##################################
 
