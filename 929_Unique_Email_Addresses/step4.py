@@ -63,7 +63,7 @@ class Solution:
 		domain_name = {}
 
 		for i, str in enumerate(emails):
-			local, domain = str.split("@", 1)
+			local, domain = str.rsplit("@", 1)
 			local_without_plus = local.split("+", 1)[0]
 			local_without_dot = local_without_plus.replace(".", "")
 			local_name[i] = local_without_dot
@@ -74,3 +74,21 @@ class Solution:
 			unique.add(f"{local_name[i]}@{domain_name[i]}")
 
 		return len(unique)
+
+
+#################################
+
+	正規表現 version
+
+#################################
+
+class Solution:
+	def numUniqueEmails(self, emails: list[str]) -> int:
+		unique_address_set = set()
+		for address in emails:
+			local, domain = address.rsplit("@", 1)
+			plus_ignored_local = re.sub(r'\+.*', '', local)    # raw 文字列記法を表す 'r'。 'r'を前置した文字列リテラル内では、python 文字列が解釈されない一方で、正規表現の解釈は残るため、'+' を文字として扱うために r'\+' と記述する。
+			dot_removed_local = re.sub(r'\.', '', plus_ignored_local)
+			unique_address_set.add(f"{dot_removed_local}@{domain}")
+
+		return len(unique_address_set)
