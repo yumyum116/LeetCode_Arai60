@@ -43,14 +43,16 @@ python の場合は for文開始時の配列の長さが保持されるため、
 ```
 from collections import Counter
 
+
 class Solution:
 	def firstUniqChar(self, s: str) -> int:
 		char_count = Counter(s)
 
 		for i, character in enumerate(s):
-			if character in char_count:
-				if char_count[character] == 1:
-					return i
+			if character not in char_count:
+				continue
+			if char_count[character] == 1:
+				return i
 		return -1
 ```
 
@@ -149,7 +151,7 @@ class Solution:
 ```
 
 メモ：
-_, idx = dict.popitem(key, value)
+_, idx = dict.popitem()
 の返り値は、{key, value} となる。本問題の場合、value のみが必要となるため、key の保存は不要。
 '_' と書くと、戻り値のメモリの占用をしないまま廃棄ができるため、関数からの戻り値が複数あり、不要な値が含まれる場合には、不要な値の場所を '_' に置換すればOK
 
