@@ -79,7 +79,34 @@ class Solution:
 class Solution:
 	def findMin(self, nums: List[int]) -> int:
 		return nums[bisect_left(nums, True, key=lambda x: x<= nums[-1])]  # x は nums[-1] 以下でなければならない
-		return nums[bisect_left(nums, True, key=partial(ge, nums[-1]))]
-		return nums[bisect_right(nums, False, key=lambda x: x < nums[0]) - len(nums)]
+		return nums[bisect_left(nums, True, key=partial(ge, nums[-1]))]   # `key=partial(ge, nums[-1])` は `key=lambda x: x<= nums[-1]` と同じ
+		return nums[bisect_right(nums, False, key=lambda x: x < nums[0]) - len(nums)]  # 負のインデックス -> 配列の最小値を返す
 ```
 - bisect を使う場合の制約：走査する配列はソートされている必要がある
+- 直感的な分かりやすさの観点においては、参考①に記載の解答よりも劣後する（自分で書いていても頭の中がこんがらがりそう）
+
+
+## step 3
+- 時間計算量の要件を満たしており、かつ可読性の観点からも以下のコードで過不足ないと判断
+- メモリ使用量は改善の余地があるのかもしれないが、可読性と保守性が下がりそうなので、以下を解とする
+
+```py
+class Solution:
+	def findMin(self, nums: List[int]) -> int:
+		if not nums:
+			return -1
+
+		left = 0
+		right = len(nums)
+		last = nums[-1]
+
+		while left < right:
+			mid = left + (right - left) // 2
+
+			if nums[mid] > last:
+				left = mid + 1
+			else:
+				right = mid
+
+		return nums[left]
+```
