@@ -112,3 +112,102 @@ class Solution:
 				visit_connected_component(node)
 		return num_connected_components
 ```
+- 隣接リストと stack による探索。
+    - Time Complexity: `O(N + E)`
+	- Space Complexity: `O(N + E)`
+
+```py
+class Solution:
+	def countComponents(self, n: int, edges: List[List[int]]) -> int:
+		adjacent_nodes = [[] for _ in range(n)]
+
+		for node1, node2 in edges:
+			assert 0 <= node1 < n and 0 <= node2 < n
+			adjacent_nodes[node1].append(node2)
+			adjacent_nodes[node2].append(node1)
+
+		visited = [False] * n
+
+		def visit_connected_nodes(first_node: int) -> int:
+			nodes_to_check = [first_node]
+			while nodes_to_check:
+				node = nodes_to_check.pop()
+				if visited[node]:
+					continue
+
+				visited[node] = True
+				nodes_to_check.extend(adjacent_nodes[node])
+
+		count = 0
+		for node_index in range(n):
+			if not visited[node_index]:
+				visit_connected_nodes(node_index)
+				count += 1
+
+		return count
+```
+
+- 隣接行列と再帰による探索もある
+    - Time Complexity: O(n^2)
+	- Space Complexity: O(n^2)
+
+```py
+class Solution:
+	def countComponents(self, n: int, edges: List[List[int]]) -> int:
+		is_connected = [[False] * n for _ in range(n)]
+
+		for node1, node2 in edges:
+			assert 0 <= node1 < n and 0 <= node2 < n
+			is_connected[node1][node2] = True
+			is_connected[node2][node1] = True
+
+		visited = [False] * n
+
+		def traverse(i: int) -> None:
+			visited[i] = True
+			for j in range(n):
+				if is_connected[i][j] and not visited[j]:
+					traverse(j)
+
+		num_connected = 0
+		for i in range(n):
+			if not visited[i]:
+				traverse(i)
+				num_connected += 1
+
+		return num_connected
+```
+- プログラムはシンプルでよいが、時間計算量の観点では最適ではない。
+
+## step 3
+- 隣接リストと stack により探索するプログラムを、`visited` 済かどうかを、`push`前に判定するプログラムに修正
+
+```py
+class Solution:
+	def countComponents(self, n: int, edges: List[List[int]]) -> int:
+		graph = [[] for _ in range(n)]
+
+		for node1, node2 in edges:
+			graph[node1].append(node2)
+			graph[node2].append(node1)
+
+		visited = [False] * n
+		components = 0
+
+		for start in range(n):
+			if visited[start]:
+				continue
+
+			components += 1
+			stack = [start]
+			visited[start] = True
+
+			while stack:
+				node = stack.pop()
+				for neighbor in graph[node]:
+					if not visited[neighbor]:
+						visited[neighbor] = True
+						stack.append(neighbor)
+
+		return components
+```
